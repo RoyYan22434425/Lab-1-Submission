@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class enemyAttack : MonoBehaviour
 {
-    protected GameObject player;
-
-    public virtual void Start(){
-        player = FindObjectOfType<playerController>().gameObject;
+    public playerHealth playerHealth;
+    public int damage = 10;
+    void OnCollisionEnter(Collision collision) {
+        if(collision.gameObject.tag == "Player"){
+            playerHealth.DamageTaking(damage);
+        }
     }
 }
