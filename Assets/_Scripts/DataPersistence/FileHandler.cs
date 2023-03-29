@@ -9,10 +9,17 @@ public class FileHandler
     private string dataDirPath = "";
     private string dataFileName = "";
 
-    public FileHandler(string dataDirPath, string dataFileName)
+    // Encryption
+    private bool useEncryption = false;
+    private readonly string encryptionCode = "word";
+
+    public FileHandler(string dataDirPath, string dataFileName, bool useEncryption)
     {
         this.dataDirPath = dataDirPath;
         this.dataFileName = dataFileName;
+
+        // Encryption
+        this.useEncryption = useEncryption;
     }
 
     public Data Load()
@@ -33,6 +40,11 @@ public class FileHandler
                     }
                 }
 
+                if (useEncryption)
+                {
+                    dataToLoad = EncryptDecrypt(dataToLoad);
+                }
+
                 loadedData = JsonUtility.FromJson<Data>(dataToLoad);
             }
             catch (Exception e)
@@ -46,17 +58,17 @@ public class FileHandler
 
     public void Save(Data data)
     {
-        
 
         string fullPath = Path.Combine(dataDirPath, dataFileName);
 
         try
         {
-            
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
-
-            
             string dataToStore = JsonUtility.ToJson(data, true);
+            if (useEncryption)
+            {
+                dataToStore = EncryptDecrypt(dataToStore);
+            }
 
             using (FileStream stream = new FileStream(fullPath, FileMode.Create))
             {
@@ -70,5 +82,15 @@ public class FileHandler
         {
             Debug.LogError("Error occured when trying to save data to file: " + fullPath + "\n" + e);
         }
+    }
+
+    private string EncryptDecrypt(string data)
+    {
+        string modifiedData = "";
+        for (int i = 0; i < data.Length; i++)
+        {
+            modifiedData += (char)(data[i] ^ encryptionCode[i % encryptionCode.Length]);
+        }
+        return modifiedData;
     }
 }
