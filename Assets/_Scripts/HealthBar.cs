@@ -19,7 +19,6 @@ public class HealthBar : MonoBehaviour
 
         GetComponent<playerHealth>().OnHealthChanged += OnHealthChanged;
 
-        // GetComponent<CharacterStats>().CurrentHealth = 120;
         Debug.Log(GetComponent<playerHealth>().currentHealth);
     }
 
